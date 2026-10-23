@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="210" viewBox="0 0 780 210" role="img" aria-labelledby="title desc">
+  <title id="title">CheckHelph Equipo</title><desc id="desc">Submarca CheckHelph Equipo</desc>
+  <g transform="translate(18 36) scale(.96)">
+    <rect x="4" y="7" width="118" height="132" rx="28" fill="#16333B"/><rect x="15" y="18" width="96" height="110" rx="20" fill="#F5F3ED"/><rect x="43" y="0" width="40" height="23" rx="9" fill="#E2A43A"/>
+    <circle cx="39" cy="55" r="7" fill="#0F6B63"/><rect x="54" y="50" width="42" height="10" rx="5" fill="#16333B"/><circle cx="39" cy="82" r="7" fill="#0F6B63"/><rect x="54" y="77" width="33" height="10" rx="5" fill="#16333B"/>
+    <circle cx="87" cy="100" r="30" fill="#0F6B63" stroke="#F5F3ED" stroke-width="5"/><path d="m74 100 9 9 18-20" fill="none" stroke="#F5F3ED" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="111" cy="38" r="6" fill="#E2A43A"/>
+  </g>
+  <text x="162" y="115" fill="#16333B" font-family="Arial, sans-serif" font-size="62" font-weight="700" letter-spacing="-2">Check<tspan fill="#0F6B63">Helph</tspan></text>
+  <text x="167" y="163" fill="#0F6B63" font-family="Arial, sans-serif" font-size="25" font-weight="600" letter-spacing="1">EQUIPO</text>
+  <rect x="284" y="145" width="70" height="4" rx="2" fill="#E2A43A"/>
+</svg>

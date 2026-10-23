@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">CheckHelph</title>
+  <rect width="128" height="128" rx="30" fill="#16333B"/>
+  <path d="M34 25h43l18 18v47a10 10 0 0 1-10 10H34a10 10 0 0 1-10-10V35a10 10 0 0 1 10-10Z" fill="#F5F3ED"/>
+  <path d="M76 25v19h19" fill="none" stroke="#16333B" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="43" cy="54" r="5" fill="#0F6B63"/><rect x="54" y="50" width="26" height="8" rx="4" fill="#16333B"/>
+  <circle cx="43" cy="73" r="5" fill="#0F6B63"/><rect x="54" y="69" width="18" height="8" rx="4" fill="#16333B"/>
+  <circle cx="79" cy="83" r="23" fill="#0F6B63" stroke="#16333B" stroke-width="4"/><path d="m69 83 7 7 14-16" fill="none" stroke="#F5F3ED" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="97" cy="31" r="6" fill="#E2A43A"/>
+</svg>

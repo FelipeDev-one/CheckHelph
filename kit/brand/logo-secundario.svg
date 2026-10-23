@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="410" viewBox="0 0 360 410" role="img" aria-labelledby="title desc">
+  <title id="title">CheckHelph, logo secundario</title><desc id="desc">Logo vertical CheckHelph</desc>
+  <g transform="translate(115 46) scale(1.05)">
+    <rect x="4" y="7" width="118" height="132" rx="28" fill="#16333B"/><rect x="15" y="18" width="96" height="110" rx="20" fill="#F5F3ED"/><rect x="43" y="0" width="40" height="23" rx="9" fill="#E2A43A"/>
+    <circle cx="39" cy="55" r="7" fill="#0F6B63"/><rect x="54" y="50" width="42" height="10" rx="5" fill="#16333B"/><circle cx="39" cy="82" r="7" fill="#0F6B63"/><rect x="54" y="77" width="33" height="10" rx="5" fill="#16333B"/>
+    <circle cx="87" cy="100" r="30" fill="#0F6B63" stroke="#F5F3ED" stroke-width="5"/><path d="m74 100 9 9 18-20" fill="none" stroke="#F5F3ED" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="111" cy="38" r="6" fill="#E2A43A"/>
+  </g>
+  <text x="180" y="265" text-anchor="middle" fill="#16333B" font-family="Arial, sans-serif" font-size="39" font-weight="700" letter-spacing="-1">Check<tspan fill="#0F6B63">Helph</tspan></text>
+  <rect x="121" y="289" width="118" height="4" rx="2" fill="#E2A43A"/>
+  <text x="180" y="326" text-anchor="middle" fill="#53676B" font-family="Arial, sans-serif" font-size="14" letter-spacing="2">OPERACIÓN CLARA</text>
+</svg>

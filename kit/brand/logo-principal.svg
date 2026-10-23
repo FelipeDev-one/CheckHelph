@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="180" viewBox="0 0 760 180" role="img" aria-labelledby="title desc">
+  <title id="title">CheckHelph</title><desc id="desc">Lista con check y logotipo CheckHelph</desc>
+  <g transform="translate(18 20)">
+    <rect x="4" y="7" width="118" height="132" rx="28" fill="#16333B"/>
+    <rect x="15" y="18" width="96" height="110" rx="20" fill="#F5F3ED"/>
+    <rect x="43" y="0" width="40" height="23" rx="9" fill="#E2A43A"/>
+    <circle cx="39" cy="55" r="7" fill="#0F6B63"/><rect x="54" y="50" width="42" height="10" rx="5" fill="#16333B"/>
+    <circle cx="39" cy="82" r="7" fill="#0F6B63"/><rect x="54" y="77" width="33" height="10" rx="5" fill="#16333B"/>
+    <circle cx="87" cy="100" r="30" fill="#0F6B63" stroke="#F5F3ED" stroke-width="5"/>
+    <path d="m74 100 9 9 18-20" fill="none" stroke="#F5F3ED" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="111" cy="38" r="6" fill="#E2A43A"/>
+  </g>
+  <text x="164" y="112" fill="#16333B" font-family="Arial, sans-serif" font-size="66" font-weight="700" letter-spacing="-2">Check<tspan fill="#0F6B63">Helph</tspan></text>
+</svg>
