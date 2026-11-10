@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16333B">
+<meta name="description" content="CheckHelph MVP web: tareas, preguntas del turno, tickets y usuarios para equipos de retail.">
+<title>CheckHelph MVP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='30' fill='%2316333B'/%3E%3Cpath d='M34 25h43l18 18v47a10 10 0 0 1-10 10H34a10 10 0 0 1-10-10V35a10 10 0 0 1 10-10Z' fill='%23F5F3ED'/%3E%3Ccircle cx='79' cy='83' r='23' fill='%230F6B63' stroke='%2316333B' stroke-width='4'/%3E%3Cpath d='m69 83 7 7 14-16' fill='none' stroke='%23F5F3ED' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='97' cy='31' r='6' fill='%23E2A43A'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#16333B;--teal:#0F6B63;--mint:#DDF1EA;--paper:#F5F3ED;--amber:#E2A43A;--amber-soft:#FBEBCB;
+  --bg:#F5F3ED;--surface:#fff;--text:#16333B;--muted:#5E7175;--line:#E3E8E4;--line-strong:#C9D1CD;
+  --primary:#0F6B63;--on-primary:#fff;--hero:#16333B;--on-hero:#F5F3ED;--danger:#B84B3E;--notice:#FBEBCB;--on-notice:#4A3A12;
+  --radius:18px;--shadow:0 10px 30px rgba(22,51,59,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1F23;--surface:#16292E;--text:#E4ECEA;--muted:#A8B8BA;--line:#24393E;--line-strong:#3A5257;
+    --primary:#6CC3B6;--on-primary:#002F2A;--mint:#1D3B3A;--hero:#0A1719;--on-hero:#E4ECEA;--danger:#FFB4A8;
+    --notice:#3A2F14;--on-notice:#F6E3B8;--amber-soft:#3A2F14;--shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1F23;--surface:#16292E;--text:#E4ECEA;--muted:#A8B8BA;--line:#24393E;--line-strong:#3A5257;
+  --primary:#6CC3B6;--on-primary:#002F2A;--mint:#1D3B3A;--hero:#0A1719;--on-hero:#E4ECEA;--danger:#FFB4A8;
+  --notice:#3A2F14;--on-notice:#F6E3B8;--amber-soft:#3A2F14;--shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #6CB5A7;outline-offset:2px}
+.app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+main{flex:1;padding:24px 16px calc(100px + env(safe-area-inset-bottom))}
+h1{font-size:28px;line-height:1.15;letter-spacing:-.5px;margin:0}
+h2{font-size:17px;margin:24px 0 10px}
+.sub{color:var(--muted);margin:4px 0 0;font-size:15px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card + .card{margin-top:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--primary);text-transform:uppercase}
+.title{font-weight:650;font-size:16.5px}
+.meta{color:var(--muted);font-size:13.5px}
+.btn{min-height:48px;border-radius:999px;border:0;padding:0 22px;font-weight:650;background:var(--primary);color:var(--on-primary);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%;min-height:52px}
+.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--line-strong)}
+.btn.text{background:transparent;color:var(--primary);padding:0 10px}
+.btn.small{min-height:40px;padding:0 16px;font-size:14.5px}
+.btn.danger{background:transparent;color:var(--danger);border:1px solid var(--line-strong)}
+label.field{display:block}
+label.field span{display:block;font-size:13.5px;font-weight:600;margin:0 0 6px}
+.input{width:100%;min-height:52px;border:1px solid var(--line-strong);border-radius:14px;background:var(--surface);padding:0 14px}
+textarea.input{padding:12px 14px;min-height:96px;resize:vertical}
+.pw{position:relative}
+.pw .input{padding-right:56px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:48px;height:48px;border:0;background:transparent;color:var(--muted);border-radius:50%}
+.error{color:var(--danger);font-size:14.5px;margin:0}
+.notice{background:var(--notice);color:var(--on-notice);border-radius:14px;padding:12px 14px;font-size:13.5px;margin-top:16px}
+.chip{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);font-size:14px}
+button.chip{cursor:pointer}
+.chip.on{background:var(--mint);border-color:var(--primary);color:var(--text);font-weight:650}
+.tag{display:inline-block;font-size:12px;font-weight:650;padding:3px 10px;border-radius:999px;background:var(--amber-soft);color:var(--on-notice)}
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center}
+.logo{width:68px;height:68px;border-radius:20px;background:#16333B;display:grid;place-items:center}
+.logo svg{width:52px;height:52px}
+.hero{background:var(--hero);color:var(--on-hero);border-radius:28px;padding:26px 22px;text-align:center;margin-top:24px}
+.hero .eyebrow{color:var(--amber)}
+.hero h3{font-size:25px;line-height:1.2;margin:8px 0 6px}
+.hero p{opacity:.8;margin:0 0 18px;font-size:14.5px}
+.hero .btn{background:var(--teal);color:#fff}
+.carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 16px 8px;margin:0 -16px;scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.carousel .card{flex:0 0 78%;scroll-snap-align:start;margin:0}
+.banner{background:var(--mint);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.banner strong{display:block}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;margin-top:16px}
+.tabs button{flex:1;min-height:44px;border:0;background:transparent;border-radius:10px;font-weight:600;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--mint);color:var(--text)}
+.search{position:relative;margin-top:14px}
+.search .input{padding-left:44px;padding-right:48px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .clear{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:48px;height:48px;border:0;background:transparent;color:var(--muted)}
+.suggest{list-style:none;margin:6px 0 0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.suggest button{width:100%;text-align:left;min-height:52px;padding:10px 16px;border:0;border-bottom:1px solid var(--line);background:transparent;display:block}
+.suggest li:last-child button{border-bottom:0}
+.suggest mark{background:var(--amber-soft);color:inherit;border-radius:4px;padding:0 2px}
+.answer{background:var(--hero);color:var(--on-hero);border-radius:24px;padding:22px;margin-top:16px}
+.answer .eyebrow{color:var(--amber)}
+details.q{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-top:10px}
+details.q summary{list-style:none;cursor:pointer;padding:14px 16px;min-height:52px}
+details.q summary::-webkit-details-marker{display:none}
+details.q p{margin:0;padding:0 16px 16px}
+.task{display:flex;gap:12px;align-items:flex-start}
+.task input{width:24px;height:24px;margin:2px 0 0;accent-color:var(--primary);flex:none}
+.task.done .title{text-decoration:line-through;opacity:.6}
+.rules{list-style:none;padding:0;margin:0;font-size:14px;display:grid;gap:4px}
+.rules li::before{content:"○";display:inline-block;width:22px;color:var(--line-strong);font-weight:700}
+.rules li.ok::before{content:"✓";color:var(--primary)}
+.switch{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px}
+.switch input{width:48px;height:28px;accent-color:var(--primary)}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav.bottom .inner{max-width:520px;margin:0 auto;display:flex}
+nav.bottom button{flex:1;border:0;background:transparent;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--muted);position:relative}
+nav.bottom button svg{width:24px;height:24px}
+nav.bottom button[aria-current="page"]{color:var(--text);font-weight:700}
+nav.bottom button[aria-current="page"] .ico{background:var(--mint)}
+nav.bottom .ico{padding:3px 16px;border-radius:999px;display:grid;place-items:center}
+.badge{position:absolute;top:6px;left:calc(50% + 6px);background:var(--danger);color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 5px}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,20,22,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:22px 16px calc(22px + env(safe-area-inset-bottom));max-height:90dvh;overflow:auto}
+.sheet h2{margin-top:0;font-size:20px}
+.pie{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.legend{display:grid;gap:6px;font-size:14px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+.center{display:grid;place-items:center;min-height:100dvh}
+.spinner{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (min-width:700px){body{background:linear-gradient(var(--bg),var(--bg))}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="root"><div class="center"><div class="spinner" role="status" aria-label="Cargando"></div></div></div>
+<div id="live" class="sr" aria-live="polite"></div>
+<script>
+/*
+ * CheckHelph · MVP web (maqueta mobile-first)
+ * Un solo archivo, sin servidor: los datos viven en localStorage de ESTE navegador.
+ * La seguridad real (autenticación, bloqueo, recuperación por correo) debe implementarse en el backend.
+ * Datos ficticios. No ingresar datos reales ni RUT.
+ */
+"use strict";
+
+// ---------- Constantes ----------
+const STORE_KEY = "checkhelph-mvp-v1";
+const DEMO_PASSWORD = "Turno#Demo2026";
+const POLICY = { MIN: 10, MAX_AGE_DAYS: 90, HISTORY: 3, MAX_FAILED: 5, LOCK_MIN: 15 };
+const PBKDF2_ITER = 210000;
+const DAY = 86400000;
+const ROLES = { JEFE: "Jefe de local", ASISTENTE: "Asistente", TRABAJADOR: "Trabajador", COLABORADOR: "Colaborador" };
+const MOMENTS = { APERTURA: "Apertura", INTERMEDIO: "Intermedio", CIERRE: "Cierre" };
+const CATS = { TURNO: "Del turno", FRECUENTE: "Frecuentes", INGRESO: "Ingreso" };
+const TICKET_TYPES = { MAQUINARIA: "Falla de maquinaria", LOCAL: "Incidente del local", ACCIDENTE: "Accidente", OTRO: "Otro incidente" };
+const TICKET_COLORS = { MAQUINARIA: "#0F6B63", LOCAL: "#E2A43A", ACCIDENTE: "#B84B3E", OTRO: "#6B8A8F" };
+
+// ---------- Utilidades ----------
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const say = msg => { const l = $("#live"); l.textContent = ""; setTimeout(() => (l.textContent = msg), 50); };
+const pad = n => String(n).padStart(2, "0");
+
+/** Hora actual; se puede simular desde Perfil para demostrar los momentos del turno. */
+function now() { return S.data?.clockOverride ? new Date(S.data.clockOverride) : new Date(); }
+
+// ---------- Contraseñas (PBKDF2-HMAC-SHA256 con Web Crypto) ----------
+const te = new TextEncoder();
+const b64 = u8 => btoa(String.fromCharCode(...u8));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function pbkdf2(pw, salt, iter) {
+  const key = await crypto.subtle.importKey("raw", te.encode(pw), "PBKDF2", false, ["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, key, 256));
+}
+async function hashPw(pw) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  return `${PBKDF2_ITER}:${b64(salt)}:${b64(await pbkdf2(pw, salt, PBKDF2_ITER))}`;
+}
+async function verifyPw(pw, stored) {
+  const [it, salt, hash] = String(stored).split(":");
+  if (!hash) return false;
+  const got = b64(await pbkdf2(pw, unb64(salt), +it));
+  let diff = got.length ^ hash.length;
+  for (let i = 0; i < Math.min(got.length, hash.length); i++) diff |= got.charCodeAt(i) ^ hash.charCodeAt(i);
+  return diff === 0;
+}
+const COMMON = ["password", "contraseña", "contrasena", "123456", "qwerty", "checkhelph", "admin"];
+function pwRules(pw, email) {
+  const local = (email || "").split("@")[0].toLowerCase(), low = pw.toLowerCase();
+  return [
+    [`Al menos ${POLICY.MIN} caracteres`, pw.length >= POLICY.MIN],
+    ["Una letra mayúscula", /\p{Lu}/u.test(pw)],
+    ["Una letra minúscula", /\p{Ll}/u.test(pw)],
+    ["Un número", /\d/.test(pw)],
+    ["Un símbolo (por ejemplo ! # $ % *)", /[^\p{L}\d\s]/u.test(pw)],
+    ["No incluye tu correo ni palabras comunes", pw.length > 0 && (local.length < 3 || !low.includes(local)) && !COMMON.some(w => low.includes(w))],
+  ];
+}
+const pwValid = (pw, email) => pwRules(pw, email).every(r => r[1]);
+const pwExpired = (changedAt, t) => t - changedAt >= POLICY.MAX_AGE_DAYS * DAY;
+const pwDaysLeft = (changedAt, t) => POLICY.MAX_AGE_DAYS - Math.floor((t - changedAt) / DAY);
+function tempPassword() {
+  const sets = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnpqrstuvwxyz", "23456789", "#$%*!?"];
+  const all = sets.join(""), r = n => crypto.getRandomValues(new Uint32Array(1))[0] % n;
+  const chars = sets.map(s => s[r(s.length)]);
+  while (chars.length < 12) chars.push(all[r(all.length)]);
+  for (let i = chars.length - 1; i > 0; i--) { const j = r(i + 1); [chars[i], chars[j]] = [chars[j], chars[i]]; }
+  return chars.join("");
+}
+
+// ---------- Horario del turno ----------
+// Apertura 08:30–12:00 · Intermedio 12:00–18:00 · Cierre 18:00–21:30 (lun, vie, sáb y último día del mes) o 18:00–21:00.
+const isLateClose = d => [1, 5, 6].includes(d.getDay()) || d.getDate() === new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+const closeMin = d => (isLateClose(d) ? 21 * 60 + 30 : 21 * 60);
+const fmtMin = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+function momentAt(d) {
+  const m = d.getHours() * 60 + d.getMinutes();
+  if (m < 8 * 60 + 30) return null;
+  if (m < 12 * 60) return "APERTURA";
+  if (m < 18 * 60) return "INTERMEDIO";
+  if (m < closeMin(d)) return "CIERRE";
+  return null;
+}
+const momentRange = (mo, d) => ({ APERTURA: "08:30–12:00", INTERMEDIO: "12:00–18:00", CIERRE: `18:00–${fmtMin(closeMin(d))}` }[mo]);
+
+// ---------- Búsqueda por palabras clave ----------
+const STOP = new Set("como que donde cual cuando para con del los las una uno por hago debo tengo puedo hay esta este son mis sus".split(" "));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/\p{Mn}/gu, "");
+const tokens = s => norm(s).split(/[^a-z0-9]+/).filter(t => t.length >= 3 && !STOP.has(t));
+const tokMatch = (q, w) => w === q || w.startsWith(q) || (q.length >= 5 && w.length >= 5 && q.startsWith(w.slice(0, 5)));
+function search(query, list) {
+  const qt = tokens(query);
+  if (!qt.length) return [];
+  return list.map(q => {
+    const tw = tokens(q.question), aw = tokens(q.answer);
+    const score = qt.reduce((s, t) => s + (tw.some(w => tokMatch(t, w)) ? 3 : aw.some(w => tokMatch(t, w)) ? 1 : 0), 0);
+    return { q, score };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score || b.q.uses - a.q.uses).map(x => x.q);
+}
+function highlight(text, query) {
+  const qt = tokens(query);
+  return text.split(/(\s+)/).map(w => (qt.some(t => tokMatch(t, norm(w).replace(/[^a-z0-9]/g, ""))) ? `<mark>${esc(w)}</mark>` : esc(w))).join("");
+}
+
+// ---------- Datos de demostración ----------
+async function seed() {
+  const t = Date.now(), h = await hashPw(DEMO_PASSWORD);
+  const user = (id, name, email, role, daysAgo = 10, active = true) => ({ id, name, email, role, active, passwordHash: h, passwordChangedAt: t - daysAgo * DAY, mustChange: false, history: [], failed: 0, lockedUntil: 0 });
+  let n = 0;
+  const q = (category, moment, question, answer, uses) => ({ id: "q" + ++n, category, moment, question, answer, uses });
+  return {
+    version: 1,
+    users: [
+      user("u-jefe", "Camila Jefa (demo)", "jefe@checkhelph.test", "JEFE"),
+      user("u-asis", "Andrés Asistente (demo)", "asistente@checkhelph.test", "ASISTENTE"),
+      user("u-trab", "Tomás Trabajador (demo)", "trabajador@checkhelph.test", "TRABAJADOR"),
+      user("u-cola", "Carla Colaboradora (demo)", "colaborador@checkhelph.test", "COLABORADOR", 95),
+      user("u-ex", "Ex integrante (demo)", "desvinculado@checkhelph.test", "TRABAJADOR", 10, false),
+    ],
+    questions: [
+      q("TURNO", "APERTURA", "¿Cómo abro la caja?", "Ingresa con tu usuario, cuenta el fondo inicial y regístralo antes de la primera venta.", 14),
+      q("TURNO", "APERTURA", "¿Qué reviso al abrir el local?", "Luces de vitrina, alarmas de salida, orden de sala y que los probadores estén limpios.", 9),
+      q("TURNO", "APERTURA", "¿Dónde dejo mis cosas al llegar?", "En tu casillero de la sala de personal; no se permiten bolsos en sala de ventas.", 6),
+      q("TURNO", "INTERMEDIO", "¿Dónde dejo las prendas de probador?", "En el carro de retorno junto a probadores; se reponen cada hora.", 11),
+      q("TURNO", "INTERMEDIO", "¿Cómo pido mi colación?", "Coordina con la jefatura del turno; las colaciones se escalonan para no dejar la sala sola.", 8),
+      q("TURNO", "INTERMEDIO", "¿Qué hago si falta una talla en sala?", "Revisa la bodega por código; si no hay stock, ofrece otra tienda o el canal online.", 5),
+      q("TURNO", "CIERRE", "¿Cómo cierro el local?", "Cuadra caja, revisa probadores y baños, apaga luces de vitrina y activa la alarma.", 12),
+      q("TURNO", "CIERRE", "¿Cómo cuadro la caja?", "Imprime el cierre, cuenta efectivo y vouchers, y registra cualquier diferencia antes de salir.", 10),
+      q("TURNO", "CIERRE", "¿A qué hora cierra el local hoy?", "Lunes, viernes, sábado y último día del mes a las 21:30; los demás días a las 21:00.", 7),
+      q("TURNO", null, "¿Qué hago si suena la alarma al salir un cliente?", "Acércate con amabilidad, ofrece revisar la etiqueta y avisa a la jefatura si hay dudas.", 4),
+      q("FRECUENTE", null, "¿Cuál es la política de cambios?", "Cambios dentro de 30 días con boleta y etiqueta.", 6),
+      q("FRECUENTE", null, "¿Qué hago ante un reclamo de un cliente?", "Escucha, registra el caso y deriva a la jefatura si no puedes resolverlo.", 3),
+      q("FRECUENTE", null, "¿Cómo reporto una falla de una máquina?", "Crea un ticket en la sección Tickets con el tipo de falla y un contexto breve.", 2),
+      q("INGRESO", null, "¿Qué documentos debo traer el primer día?", "Pendiente de completar por la jefatura.", 0),
+    ],
+    tasks: [
+      { id: 1, title: "Revisar etiquetas de precio", area: "Sala de ventas", moment: "APERTURA", due: "10:30", evidence: true, done: false },
+      { id: 2, title: "Ordenar probadores", area: "Probadores", moment: "INTERMEDIO", due: null, evidence: false, done: false },
+      { id: 3, title: "Reponer tallas en mesa central", area: "Sala de ventas", moment: "INTERMEDIO", due: "15:00", evidence: true, done: false },
+      { id: 4, title: "Cuadrar caja", area: "Caja", moment: "CIERRE", due: "21:00", evidence: true, done: false },
+      { id: 5, title: "Revisar alarmas de salida", area: "Acceso", moment: "APERTURA", due: null, evidence: false, done: true },
+    ],
+    tickets: [
+      { id: uid(), type: "MAQUINARIA", context: "Lector de código de caja 2 no lee", status: "Abierto", by: "Tomás Trabajador (demo)", at: t - 2 * DAY },
+      { id: uid(), type: "LOCAL", context: "Luz de probador 3 parpadea", status: "En revisión", by: "Carla Colaboradora (demo)", at: t - DAY },
+      { id: uid(), type: "MAQUINARIA", context: "Impresora de boletas sin papel de repuesto", status: "Cerrado", by: "Tomás Trabajador (demo)", at: t - 5 * DAY },
+    ],
+    pending: [], resetCodes: [], assistantSchedules: false, session: null, clockOverride: null,
+  };
+}
+
+// ---------- Estado y persistencia ----------
+const S = { data: null, auth: "login", forced: null, tab: "inicio", sub: null, q: { cat: "TURNO", text: "", selected: null, sent: null }, sheet: null, flash: null };
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S.data)); } catch (e) { console.warn("No se pudo guardar", e); } }
+function load() { try { const d = JSON.parse(localStorage.getItem(STORE_KEY)); return d && d.version === 1 ? d : null; } catch { return null; } }
+const me = () => S.data.users.find(u => u.id === S.data.session && u.active) || null;
+const updUser = (id, f) => { S.data.users = S.data.users.map(u => (u.id === id ? { ...u, ...f(u) } : u)); save(); };
+
+// ---------- Lógica de autenticación (simula el servidor) ----------
+async function login(email, pw) {
+  const u = S.data.users.find(x => x.email.toLowerCase() === email.trim().toLowerCase());
+  if (!u) { await hashPw(pw); return { r: "invalid" }; } // mismo tiempo de respuesta aunque no exista
+  const t = Date.now();
+  if (u.lockedUntil > t) return { r: "locked", min: Math.ceil((u.lockedUntil - t) / 60000) };
+  if (!(await verifyPw(pw, u.passwordHash))) {
+    const f = u.failed + 1;
+    if (f >= POLICY.MAX_FAILED) { updUser(u.id, () => ({ failed: 0, lockedUntil: t + POLICY.LOCK_MIN * 60000 })); return { r: "locked", min: POLICY.LOCK_MIN }; }
+    updUser(u.id, () => ({ failed: f }));
+    return { r: "invalid" };
+  }
+  if (!u.active) return { r: "blocked" }; // solo se informa a quien conoce la contraseña
+  updUser(u.id, () => ({ failed: 0, lockedUntil: 0 }));
+  const expired = pwExpired(u.passwordChangedAt, t);
+  if (u.mustChange || expired) return { r: "change", user: u, expired };
+  S.data.session = u.id; save();
+  return { r: "ok" };
+}
+async function changePassword(userId, current, next, startSession) {
+  const u = S.data.users.find(x => x.id === userId);
+  if (!u) return "Usuario no encontrado.";
+  if (current !== null && !(await verifyPw(current, u.passwordHash))) return "La contraseña actual no es correcta.";
+  if (!pwValid(next, u.email)) return "La nueva contraseña no cumple los requisitos.";
+  for (const old of [u.passwordHash, ...u.history]) if (await verifyPw(next, old)) return `No puedes repetir tus últimas ${POLICY.HISTORY} contraseñas.`;
+  const h = await hashPw(next);
+  updUser(userId, x => ({ passwordHash: h, history: [x.passwordHash, ...x.history].slice(0, POLICY.HISTORY), passwordChangedAt: Date.now(), mustChange: false }));
+  if (startSession) { S.data.session = userId; save(); }
+  return null;
+}
+async function requestReset(email) {
+  const u = S.data.users.find(x => x.email.toLowerCase() === email.trim().toLowerCase() && x.active);
+  if (!u) return null;
+  const code = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000));
+  S.data.resetCodes = S.data.resetCodes.filter(r => r.email !== u.email).concat({ email: u.email, codeHash: await hashPw(code), expiresAt: Date.now() + 15 * 60000, attempts: 0 });
+  save();
+  return code;
+}
+async function resetWithCode(email, code, next) {
+  const generic = "El código no es válido o venció. Solicita uno nuevo.";
+  const e = S.data.resetCodes.find(r => r.email.toLowerCase() === email.trim().toLowerCase());
+  if (!e || e.expiresAt < Date.now() || e.attempts >= 5) return generic;
+  if (!(await verifyPw(code.trim(), e.codeHash))) { e.attempts++; save(); return generic; }
+  const u = S.data.users.find(x => x.email === e.email);
+  const err = await changePassword(u.id, null, next, false);
+  if (!err) { S.data.resetCodes = S.data.resetCodes.filter(r => r !== e); updUser(u.id, () => ({ failed: 0, lockedUntil: 0 })); }
+  return err;
+}
+
+// ---------- Íconos ----------
+const I = {
+  logo: `<svg viewBox="0 0 128 128" aria-hidden="true"><path d="M34 25h43l18 18v47a10 10 0 0 1-10 10H34a10 10 0 0 1-10-10V35a10 10 0 0 1 10-10Z" fill="#F5F3ED"/><path d="M76 25v19h19" fill="none" stroke="#16333B" stroke-width="6" stroke-linejoin="round"/><circle cx="43" cy="54" r="5" fill="#0F6B63"/><rect x="54" y="50" width="26" height="8" rx="4" fill="#16333B"/><circle cx="43" cy="73" r="5" fill="#0F6B63"/><rect x="54" y="69" width="18" height="8" rx="4" fill="#16333B"/><circle cx="79" cy="83" r="23" fill="#0F6B63" stroke="#16333B" stroke-width="4"/><path d="m69 83 7 7 14-16" fill="none" stroke="#F5F3ED" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="97" cy="31" r="6" fill="#E2A43A"/></svg>`,
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>`,
+  tasks: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>`,
+  ask: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h12v9H8l-4 3z"/><path d="M16 9h4v9l-3-2h-6v-2"/></svg>`,
+  ticket: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M12 8v1m0 3v1m0 3v1"/></svg>`,
+  user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>`,
+  clock: `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+  search: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>`,
+  eye: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`,
+};
+
+// ---------- Componentes ----------
+const pwField = (id, label, auto = "current-password") => `
+  <label class="field"><span>${label}</span>
+    <div class="pw"><input class="input" id="${id}" type="password" autocomplete="${auto}" required>
+    <button type="button" data-toggle="${id}" aria-label="Mostrar contraseña" aria-pressed="false">${I.eye}</button></div>
+  </label>`;
+const rulesList = (pw, email, confirm) => {
+  const rules = pwRules(pw, email);
+  if (confirm !== undefined) rules.push(["Ambas contraseñas coinciden", pw.length > 0 && pw === confirm]);
+  return rules.map(([l, ok]) => `<li class="${ok ? "ok" : ""}">${l}<span class="sr">${ok ? " (cumple)" : " (falta)"}</span></li>`).join("");
+};
+const rulesBlock = `<ul class="rules" id="rules"></ul><p class="meta">Deberás cambiarla cada ${POLICY.MAX_AGE_DAYS} días y no podrás repetir las últimas ${POLICY.HISTORY}.</p>`;
+const notice = t => `<div class="notice">${t}</div>`;
+const brand = (title, sub) => `<div class="brand"><div class="logo">${I.logo}</div><h1 style="margin-top:14px">${esc(title)}</h1><p class="sub">${esc(sub)}</p></div>`;
+
+// ---------- Render principal ----------
+const root = $("#root");
+function render() {
+  const u = me();
+  if (!u) { renderAuth(); return; }
+  const canSchedules = u.role === "JEFE" || (u.role === "ASISTENTE" && S.data.assistantSchedules);
+  const manage = u.role === "JEFE" || u.role === "ASISTENTE";
+  const views = { inicio: viewHome, tareas: viewTasks, preguntas: viewQuestions, tickets: viewTickets, perfil: viewProfile };
+  let body;
+  if (S.sub === "usuarios") body = u.role === "JEFE" ? viewUsers(u) : "<p>No tienes acceso.</p>";
+  else if (S.sub === "clave") body = viewChangePw();
+  else if (S.sub === "horarios") body = canSchedules ? viewSchedules() : "<p>No tienes acceso a esta sección.</p>";
+  else body = views[S.tab](u);
+  const nav = [["inicio", "Inicio", I.home], ["tareas", "Tareas", I.tasks], ["preguntas", "Preguntas", I.ask], ["tickets", "Tickets", I.ticket], ["perfil", "Perfil", I.user]];
+  const pend = manage ? S.data.pending.length : 0;
+  root.innerHTML = `<div class="app"><main id="main">${body}</main>
+    <nav class="bottom" aria-label="Navegación principal"><div class="inner">${nav.map(([k, l, ic]) => `
+      <button data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ""}><span class="ico">${ic}</span>${l}${k === "preguntas" && pend ? `<span class="badge" aria-label="${pend} consultas sin respuesta">${pend}</span>` : ""}</button>`).join("")}
+    </div></nav></div>${S.sheet ? sheetHtml() : ""}`;
+  afterRender();
+}
+function afterRender() {
+  if (S.tab === "preguntas" && !S.sub) renderQResults();
+  const r = $("#rules"); if (r) updateRules();
+  if (S.flash) { say(S.flash); S.flash = null; }
+}
+
+// ---------- Autenticación ----------
+function renderAuth() {
+  let html;
+  if (S.forced) {
+    html = `${brand("Crea una nueva contraseña", S.forced.expired ? `Tu contraseña tiene más de ${POLICY.MAX_AGE_DAYS} días.` : "Estás usando una contraseña temporal.")}
+      <form class="stack" id="f-forced" style="margin-top:28px" novalidate>
+        ${pwField("np", "Nueva contraseña", "new-password")}${pwField("np2", "Repite la nueva contraseña", "new-password")}
+        ${rulesBlock}<p class="error" id="err" role="alert"></p>
+        <button class="btn block" id="submit" disabled>Guardar y entrar</button>
+        <button class="btn text" type="button" data-act="cancel-forced">Cancelar</button>
+      </form>`;
+  } else if (S.auth === "forgot") {
+    const st = S.reset || { step: 1 };
+    if (st.step === 1) html = `${brand("Recuperar contraseña", "Te enviaremos un código a tu correo")}
+      <form class="stack" id="f-forgot1" style="margin-top:28px" novalidate>
+        <label class="field"><span>Correo</span><input class="input" id="email" type="email" autocomplete="email" inputmode="email" required value="${esc(st.email || "")}"></label>
+        <button class="btn block">Enviar código</button>
+        <button class="btn text" type="button" data-act="to-login">Volver</button>
+        <p class="meta">Si no recuerdas tu correo, tu jefe de local puede asignarte una contraseña temporal.</p>
+      </form>`;
+    else if (st.step === 2) html = `${brand("Recuperar contraseña", "Ingresa el código y tu nueva contraseña")}
+      <form class="stack" id="f-forgot2" style="margin-top:28px" novalidate>
+        <p style="margin:0">Si el correo pertenece a una cuenta activa, recibirás un código válido por 15 minutos.</p>
+        ${notice(st.code ? `Maqueta: el correo aún no está conectado. Tu código es <strong>${st.code}</strong>.` : "Maqueta: no hay una cuenta activa con ese correo, así que no se generó código.")}
+        <label class="field"><span>Código de 6 dígitos</span><input class="input" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\\d{6}"></label>
+        ${pwField("np", "Nueva contraseña", "new-password")}${pwField("np2", "Repite la nueva contraseña", "new-password")}
+        ${rulesBlock}<p class="error" id="err" role="alert"></p>
+        <button class="btn block" id="submit" disabled>Cambiar contraseña</button>
+        <button class="btn text" type="button" data-act="reset-again">Solicitar otro código</button>
+      </form>`;
+    else html = `${brand("Contraseña actualizada", "Ya puedes ingresar con tu nueva contraseña.")}<div class="stack" style="margin-top:28px"><button class="btn block" data-act="to-login">Volver a ingresar</button></div>`;
+  } else {
+    html = `${brand("CheckHelph", "Ingresa con tu correo del local")}
+      <form class="stack" id="f-login" style="margin-top:28px" novalidate>
+        <label class="field"><span>Correo</span><input class="input" id="email" type="email" autocomplete="username" inputmode="email" required></label>
+        ${pwField("pw", "Contraseña")}
+        <p class="error" id="err" role="alert"></p>
+        <button class="btn block" id="submit">Ingresar</button>
+        <button class="btn text" type="button" data-act="to-forgot">Olvidé mi contraseña</button>
+      </form>
+      <details class="card" style="margin-top:20px"><summary class="title" style="cursor:pointer;min-height:32px">Cuentas de prueba (ficticias)</summary>
+        <p class="meta">Contraseña de demostración: <strong>${DEMO_PASSWORD}</strong></p>
+        <div class="stack" style="gap:8px">${S.data.users.slice(0, 5).map(u => `<button class="btn ghost small" type="button" data-fill="${esc(u.email)}">${esc(u.email)}</button>`).join("")}</div>
+        <p class="meta">colaborador: contraseña vencida (95 días) · desvinculado: cuenta bloqueada.</p>
+      </details>
+      ${notice("Maqueta: los datos se guardan solo en este navegador. No ingreses datos reales.")}`;
+  }
+  root.innerHTML = `<div class="app"><main style="padding-bottom:40px">${html}</main></div>`;
+  afterRender();
+}
+function updateRules() {
+  const np = $("#np"), np2 = $("#np2"), r = $("#rules"), b = $("#submit");
+  if (!np || !r) return;
+  const email = S.forced?.user.email || S.reset?.email || me()?.email || "";
+  r.innerHTML = rulesList(np.value, email, np2 ? np2.value : undefined);
+  const code = $("#code");
+  if (b) b.disabled = !(pwValid(np.value, email) && (!np2 || np.value === np2.value) && (!code || /^\d{6}$/.test(code.value)) && (!$("#cur") || $("#cur").value));
+}
+function busy(btn, on, label) { if (!btn) return; btn.disabled = on; if (on) { btn.dataset.l = btn.textContent; btn.textContent = label || "Procesando…"; } else btn.textContent = btn.dataset.l || btn.textContent; }
+
+// ---------- Inicio ----------
+function viewHome(u) {
+  const t = now(), mo = momentAt(t);
+  const pending = S.data.tasks.filter(x => !x.done).sort((a, b) => (a.moment === mo ? 0 : 1) - (b.moment === mo ? 0 : 1));
+  const next = pending[0];
+  return `<div class="brand"><div class="logo">${I.logo}</div>
+      <h1 style="font-size:24px;margin-top:12px">Hola, ${esc(u.name.split(" ")[0])}</h1>
+      <p class="sub">${mo ? `${MOMENTS[mo]} · ${momentRange(mo, t)}` : "Local cerrado"} · ${pending.length} tareas pendientes</p></div>
+    ${next ? `<section class="hero" aria-label="Próxima tarea"><div class="eyebrow">Próxima tarea</div><h3>${esc(next.title)}</h3>
+      <p>${esc(next.area)} · ${MOMENTS[next.moment]}${next.due ? ` · vence ${next.due}` : ""}</p><button class="btn" data-tab="tareas">Ver tareas</button></section>` : `<div class="card" style="margin-top:24px">¡Todo al día! No hay tareas pendientes.</div>`}
+    <h2>Pendientes del turno</h2>
+    <div class="carousel" role="list">${pending.map(x => `<article class="card" role="listitem"><div class="eyebrow">${MOMENTS[x.moment]}</div>
+      <div class="title" style="min-height:48px">${esc(x.title)}</div><div class="row" style="margin-top:10px">${x.due ? `<span class="chip">⏱ ${x.due}</span>` : ""}${x.evidence ? `<span class="chip">📷 Evidencia</span>` : ""}</div></article>`).join("")}</div>
+    <button class="btn ghost block" style="margin-top:20px" data-tab="preguntas">Tengo una duda del turno</button>`;
+}
+
+// ---------- Tareas ----------
+function viewTasks(u) {
+  const perm = { JEFE: "Puedes crear, asignar y eliminar tareas de cualquier rol.", ASISTENTE: "Puedes asignar tareas a Trabajadores y Colaboradores.", TRABAJADOR: "Puedes completar tus tareas y crear tareas propias.", COLABORADOR: "Puedes completar las tareas que te asignen." }[u.role];
+  return `<h1>Tareas</h1><p class="sub">${perm}</p><div style="margin-top:20px">${S.data.tasks.map(x => `
+    <label class="card task ${x.done ? "done" : ""}" style="display:flex"><input type="checkbox" data-task="${x.id}" ${x.done ? "checked" : ""}>
+      <span><span class="title" style="display:block">${esc(x.title)}</span><span class="meta">${esc(x.area)} · ${MOMENTS[x.moment]}${x.due ? ` · vence ${x.due}` : ""}${x.evidence ? " · requiere evidencia" : ""}</span></span></label>`).join("")}</div>
+    ${notice("Pendiente de definir: tipo de evidencia, cuándo se pide y quién la revisa. Crear y asignar tareas llegará en el próximo avance.")}`;
+}
+
+// ---------- Preguntas ----------
+function viewQuestions(u) {
+  const t = now(), mo = momentAt(t), manage = u.role === "JEFE" || u.role === "ASISTENTE";
+  return `<h1>Preguntas</h1><p class="sub">Escribe tu duda o elige una sugerida.</p>
+    <div class="banner" style="margin-top:20px">${I.clock}<div><strong>${mo ? `Ahora: ${MOMENTS[mo]} · ${momentRange(mo, t)}` : "Local cerrado"}</strong>
+      <span class="meta">Hoy el cierre es a las ${fmtMin(closeMin(t))}${S.data.clockOverride ? " · hora simulada" : ""}</span></div></div>
+    ${manage && S.data.pending.length ? `<h2>Consultas sin respuesta (${S.data.pending.length})</h2>${S.data.pending.map(p => `
+      <div class="card" style="background:var(--amber-soft);border-color:transparent"><div class="title">${esc(p.text)}</div><div class="meta">Consultó: ${esc(p.by)}</div>
+      ${u.role === "JEFE" ? `<div class="row" style="margin-top:10px"><button class="btn small" data-answer="${p.id}">Responder</button><button class="btn text small" data-dismiss="${p.id}">Descartar</button></div>` : `<p class="meta" style="margin:6px 0 0">Solo el Jefe de local puede responder.</p>`}</div>`).join("")}` : ""}
+    <div class="tabs" role="tablist">${Object.entries(CATS).map(([k, l]) => `<button role="tab" aria-selected="${S.q.cat === k}" data-cat="${k}">${l}</button>`).join("")}</div>
+    <div class="search" role="search">${I.search}<label class="sr" for="qinput">Escribe tu duda</label>
+      <input class="input" id="qinput" type="search" placeholder="Escribe tu duda" autocomplete="off" enterkeyhint="search" value="${esc(S.q.text)}" aria-controls="qresults">
+      <button class="clear" data-act="qclear" aria-label="Borrar búsqueda" ${S.q.text ? "" : "hidden"}>✕</button></div>
+    <div id="qresults" aria-live="polite"></div>`;
+}
+function renderQResults() {
+  const box = $("#qresults"); if (!box) return;
+  const u = me(), mo = momentAt(now()), cat = S.q.cat, text = S.q.text;
+  const inCat = S.data.questions.filter(q => q.category === cat);
+  const results = search(text, inCat);
+  const sel = S.data.questions.find(q => q.id === S.q.selected);
+  const clr = $("#main .clear"); if (clr) clr.hidden = !text;
+  let html;
+  if (sel) {
+    html = `<article class="answer"><div class="eyebrow">${sel.moment ? MOMENTS[sel.moment] : CATS[sel.category]}</div><h3 style="margin:6px 0 10px;font-size:20px">${esc(sel.question)}</h3><p style="margin:0">${esc(sel.answer)}</p></article>`;
+  } else if (tokens(text).length && results.length) {
+    html = `<p class="meta" style="margin:12px 0 4px;font-weight:650">Sugerencias</p><ul class="suggest">${results.slice(0, 5).map(q => `<li><button data-pick="${q.id}"><span style="display:block">${highlight(q.question, text)}</span>${q.moment ? `<span class="eyebrow" style="font-size:11px">${MOMENTS[q.moment]}</span>` : ""}</button></li>`).join("")}</ul>`;
+  } else if (tokens(text).length) {
+    html = cat === "TURNO"
+      ? `<div class="card" style="margin-top:16px"><div class="title">No encontramos respuesta en las preguntas del turno.</div><button class="btn block" style="margin-top:12px" data-act="to-faq">Buscar en Preguntas frecuentes</button></div>`
+      : S.q.sent === text
+        ? `<div class="card" style="margin-top:16px"><div class="title">Consulta enviada</div><p class="meta" style="margin:4px 0 0">Tu jefe de local la verá y agregará la respuesta.</p></div>`
+        : `<div class="card" style="margin-top:16px"><div class="title">Consulta con tu jefe de local</div><p class="meta" style="margin:4px 0 0">Puedes dejar registrada tu duda para que agregue la respuesta.</p><button class="btn block" style="margin-top:12px" data-act="send-pending">Enviar consulta al jefe</button></div>`;
+  } else {
+    const sug = cat === "TURNO" ? S.data.questions.filter(q => q.category === "TURNO" && (!mo || q.moment === mo)).sort((a, b) => b.uses - a.uses).slice(0, 4) : [];
+    html = (cat === "TURNO" ? `<h2>${mo ? `Sugeridas para ${MOMENTS[mo].toLowerCase()}` : "Más consultadas"}</h2><div class="row">${sug.map(q => `<button class="chip" data-pick="${q.id}">${esc(q.question)}</button>`).join("")}</div><h2>Todas las preguntas del turno</h2>` : `<div style="height:8px"></div>`)
+      + (inCat.length ? [...inCat].sort((a, b) => b.uses - a.uses).map(q => `<details class="q" data-open="${q.id}"><summary>${q.moment ? `<span class="eyebrow" style="display:block">${MOMENTS[q.moment]}</span>` : ""}<span class="title">${esc(q.question)}</span></summary><p>${esc(q.answer)}</p></details>`).join("") : `<p>Aún no hay preguntas en esta sección.</p>`);
+  }
+  box.innerHTML = html;
+}
+function pickQuestion(id) {
+  const q = S.data.questions.find(x => x.id === id); if (!q) return;
+  q.uses++; save();
+  S.q.selected = id; S.q.text = q.question;
+  const inp = $("#qinput"); if (inp) { inp.value = q.question; inp.blur(); }
+  renderQResults(); say("Respuesta: " + q.answer);
+}
+
+// ---------- Tickets ----------
+function pieSvg(counts) {
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  if (!total) return "";
+  let a0 = -Math.PI / 2, paths = "";
+  for (const [k, v] of Object.entries(counts)) {
+    if (!v) continue;
+    const a1 = a0 + (v / total) * 2 * Math.PI, large = a1 - a0 > Math.PI ? 1 : 0;
+    const p = (a, r) => `${60 + r * Math.cos(a)},${60 + r * Math.sin(a)}`;
+    paths += v === total ? `<circle cx="60" cy="60" r="50" fill="${TICKET_COLORS[k]}"/>` : `<path d="M60,60 L${p(a0, 50)} A50,50 0 ${large} 1 ${p(a1, 50)} Z" fill="${TICKET_COLORS[k]}" stroke="var(--surface)" stroke-width="2"/>`;
+    a0 = a1;
+  }
+  return `<svg viewBox="0 0 120 120" width="132" height="132" role="img" aria-label="Gráfico de tickets por tipo">${paths}<circle cx="60" cy="60" r="26" fill="var(--surface)"/><text x="60" y="66" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">${total}</text></svg>`;
+}
+function viewTickets(u) {
+  const manage = u.role === "JEFE" || u.role === "ASISTENTE";
+  const counts = Object.fromEntries(Object.keys(TICKET_TYPES).map(k => [k, S.data.tickets.filter(t => t.type === k).length]));
+  const list = [...S.data.tickets].sort((a, b) => b.at - a.at);
+  return `<h1>Tickets</h1><p class="sub">${manage ? "Bandeja de fallas e incidentes del local." : "Reporta fallas, accidentes o incidentes."}</p>
+    <button class="btn block" style="margin-top:20px" data-act="new-ticket">Reportar incidente</button>
+    ${manage ? `<h2>Tickets por tipo</h2><div class="card pie">${pieSvg(counts)}<div class="legend">${Object.entries(TICKET_TYPES).map(([k, l]) => `<span><i style="background:${TICKET_COLORS[k]}"></i>${l}: <strong>${counts[k]}</strong></span>`).join("")}</div></div>` : ""}
+    <h2>Recientes</h2>${list.map(t => `<div class="card"><div class="eyebrow">${TICKET_TYPES[t.type]}</div><div class="title">${esc(t.context)}</div>
+      <div class="meta">${esc(t.status)} · ${esc(t.by)} · ${new Date(t.at).toLocaleDateString("es-CL")}</div>
+      ${manage && t.status !== "Cerrado" ? `<div class="row" style="margin-top:8px"><button class="btn ghost small" data-ticket-next="${t.id}">${t.status === "Abierto" ? "Marcar en revisión" : "Cerrar ticket"}</button></div>` : ""}</div>`).join("")}
+    ${notice("La notificación por correo o push al Jefe y la Asistente aún no está conectada.")}`;
+}
+
+// ---------- Perfil ----------
+function viewProfile(u) {
+  const days = pwDaysLeft(u.passwordChangedAt, Date.now());
+  const ov = S.data.clockOverride;
+  const local = ov ? ov.slice(0, 16) : "";
+  return `<h1>${esc(u.name)}</h1><p class="sub">${ROLES[u.role]} · ${esc(u.email)}</p>
+    <h2>Seguridad</h2><p class="meta" style="margin:0 0 10px;${days <= 7 ? "color:var(--danger)" : ""}">Tu contraseña vence en ${days} días.${days <= 7 ? " Cámbiala pronto." : ""}</p>
+    <button class="btn ghost block" data-sub="clave">Cambiar contraseña</button>
+    ${u.role === "JEFE" ? `<h2>Administración</h2><button class="btn ghost block" data-sub="usuarios">Usuarios del local</button>
+      <label class="switch"><span>Asistente puede ver Horarios</span><input type="checkbox" role="switch" data-act="toggle-schedules" ${S.data.assistantSchedules ? "checked" : ""}></label>` : ""}
+    ${u.role === "JEFE" || (u.role === "ASISTENTE" && S.data.assistantSchedules) ? `<h2>Gestión</h2><button class="btn ghost block" data-sub="horarios">Revisión de horarios</button>` : ""}
+    <h2>Sesión</h2><button class="btn block" data-act="logout">Cerrar sesión</button>
+    <details class="card" style="margin-top:24px"><summary class="title" style="cursor:pointer;min-height:32px">Herramientas de demostración</summary>
+      <label class="field" style="margin-top:12px"><span>Simular fecha y hora (para ver Apertura, Intermedio o Cierre)</span>
+        <input class="input" type="datetime-local" id="clock" value="${local}"></label>
+      <div class="row" style="margin-top:10px"><button class="btn small" data-act="clock-set">Aplicar</button><button class="btn ghost small" data-act="clock-reset">Usar hora real</button></div>
+      <button class="btn danger block" style="margin-top:16px" data-act="reset-all">Reiniciar datos de demostración</button>
+    </details>
+    ${notice("Maqueta: los datos se guardan solo en este navegador. La versión real validará todo en el servidor.")}`;
+}
+function viewChangePw() {
+  return `<h1>Cambiar contraseña</h1><form class="stack" id="f-change" style="margin-top:20px" novalidate>
+    ${pwField("cur", "Contraseña actual")}${pwField("np", "Nueva contraseña", "new-password")}${pwField("np2", "Repite la nueva contraseña", "new-password")}
+    ${rulesBlock}<p class="error" id="err" role="alert"></p>
+    <button class="btn block" id="submit" disabled>Guardar</button><button class="btn text" type="button" data-sub="">Cancelar</button></form>`;
+}
+function viewSchedules() {
+  return `<h1>Horarios</h1><p class="sub">Revisión orientativa de planillas Excel.</p>
+    <button class="btn block" style="margin-top:20px" disabled>Cargar planillas (próximamente)</button>
+    ${notice("Pendiente: formato de colación y validación de reglas legales vigentes. Será una herramienta de apoyo, no asesoría jurídica. No se leerán ni guardarán RUT.")}
+    <button class="btn text" style="margin-top:12px" data-sub="">Volver</button>`;
+}
+
+// ---------- Usuarios (Jefe) ----------
+function viewUsers(meU) {
+  const t = Date.now();
+  const list = [...S.data.users].sort((a, b) => (b.active - a.active) || Object.keys(ROLES).indexOf(a.role) - Object.keys(ROLES).indexOf(b.role));
+  return `<h1>Usuarios del local</h1><p class="sub">${S.data.users.filter(u => u.active).length} activos · ${S.data.users.filter(u => !u.active).length} bloqueados</p>
+    <button class="btn block" style="margin-top:20px" data-act="new-user">Crear cuenta</button><h2>Equipo</h2>
+    ${list.map(u => `<div class="card" style="${u.active ? "" : "opacity:.75"}"><div class="title">${esc(u.name)}</div><div class="meta">${ROLES[u.role]} · ${esc(u.email)}</div>
+      <div class="row" style="margin-top:6px">${!u.active ? `<span class="tag">Bloqueado</span>` : ""}${u.lockedUntil > t ? `<span class="tag">Bloqueo temporal por intentos</span>` : ""}${u.mustChange ? `<span class="tag">Clave temporal</span>` : pwExpired(u.passwordChangedAt, t) ? `<span class="tag">Clave vencida</span>` : ""}</div>
+      ${u.id !== meU.id ? `<div class="row" style="margin-top:10px">${u.active ? `<button class="btn danger small" data-block="${u.id}">Bloquear</button><button class="btn text small" data-temp="${u.id}">Clave temporal</button>` : `<button class="btn ghost small" data-unblock="${u.id}">Reactivar</button>`}</div>` : ""}</div>`).join("")}
+    ${notice("Bloquear impide ingresar y cierra la sesión de inmediato; sus registros se conservan. Úsalo cuando alguien deja el local.")}
+    <button class="btn text" style="margin-top:12px" data-sub="">Volver</button>`;
+}
+
+// ---------- Hojas modales ----------
+function sheetHtml() {
+  const s = S.sheet;
+  let inner = "";
+  if (s.type === "answer") {
+    const p = S.data.pending.find(x => x.id === s.id), mo = momentAt(now());
+    inner = `<h2 id="sheet-t">Responder consulta</h2><form class="stack" id="f-answer">
+      <label class="field"><span>Pregunta</span><input class="input" id="a-q" value="${esc(p?.text)}" required></label>
+      <label class="field"><span>Respuesta</span><textarea class="input" id="a-a" required></textarea></label>
+      <fieldset style="border:0;padding:0;margin:0"><legend class="title" style="font-size:14px;margin-bottom:6px">Publicar en</legend><div class="row">${Object.entries(CATS).map(([k, l]) => `<label class="chip"><input type="radio" name="a-cat" value="${k}" ${k === "TURNO" ? "checked" : ""} style="margin-right:6px">${l}</label>`).join("")}</div></fieldset>
+      <fieldset style="border:0;padding:0;margin:0"><legend class="title" style="font-size:14px;margin-bottom:6px">Momento del turno (solo Del turno)</legend><div class="row"><label class="chip"><input type="radio" name="a-mo" value="" ${!mo ? "checked" : ""} style="margin-right:6px">Cualquiera</label>${Object.entries(MOMENTS).map(([k, l]) => `<label class="chip"><input type="radio" name="a-mo" value="${k}" ${mo === k ? "checked" : ""} style="margin-right:6px">${l}</label>`).join("")}</div></fieldset>
+      <button class="btn block">Publicar</button><button class="btn text" type="button" data-act="close-sheet">Cancelar</button></form>`;
+  } else if (s.type === "user") {
+    inner = `<h2 id="sheet-t">Crear cuenta</h2><form class="stack" id="f-user" novalidate>
+      <label class="field"><span>Nombre</span><input class="input" id="nu-name" autocomplete="off" required></label>
+      <label class="field"><span>Correo</span><input class="input" id="nu-email" type="email" inputmode="email" autocomplete="off" required></label>
+      <fieldset style="border:0;padding:0;margin:0"><legend class="title" style="font-size:14px;margin-bottom:6px">Rol</legend><div class="row">${Object.entries(ROLES).map(([k, l]) => `<label class="chip"><input type="radio" name="nu-role" value="${k}" ${k === "COLABORADOR" ? "checked" : ""} style="margin-right:6px">${l}</label>`).join("")}</div></fieldset>
+      <p class="error" id="err" role="alert"></p><button class="btn block">Crear</button><button class="btn text" type="button" data-act="close-sheet">Cancelar</button></form>`;
+  } else if (s.type === "temp") {
+    inner = `<h2 id="sheet-t">Contraseña temporal</h2><p>Entrégala en persona a <strong>${esc(s.email)}</strong>:</p>
+      <p style="font:700 22px/1.3 ui-monospace,Consolas,monospace;letter-spacing:1px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center">${esc(s.pw)}</p>
+      <p class="meta">Deberá cambiarla al ingresar. En la versión real se enviará un enlace por correo.</p><button class="btn block" data-act="close-sheet">Listo</button>`;
+  } else if (s.type === "block") {
+    const u = S.data.users.find(x => x.id === s.id);
+    inner = `<h2 id="sheet-t">¿Bloquear a ${esc(u.name)}?</h2><p>No podrá ingresar a CheckHelph. Puedes reactivar la cuenta más adelante.</p>
+      <div class="stack"><button class="btn block" data-act="confirm-block">Bloquear</button><button class="btn text" data-act="close-sheet">Cancelar</button></div>`;
+  } else if (s.type === "ticket") {
+    inner = `<h2 id="sheet-t">Reportar incidente</h2><form class="stack" id="f-ticket">
+      <fieldset style="border:0;padding:0;margin:0"><legend class="title" style="font-size:14px;margin-bottom:6px">Tipo</legend><div class="row">${Object.entries(TICKET_TYPES).map(([k, l], i) => `<label class="chip"><input type="radio" name="tk-type" value="${k}" ${i === 0 ? "checked" : ""} style="margin-right:6px">${l}</label>`).join("")}</div></fieldset>
+      <label class="field"><span>Contexto breve</span><textarea class="input" id="tk-ctx" maxlength="280" required placeholder="Qué pasó y dónde"></textarea></label>
+      <button class="btn block">Enviar ticket</button><button class="btn text" type="button" data-act="close-sheet">Cancelar</button></form>`;
+  }
+  return `<div class="sheet-bg" data-act="sheet-bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t">${inner}</div></div>`;
+}
+function openSheet(sheet) { S.sheet = sheet; render(); setTimeout(() => $(".sheet input, .sheet textarea, .sheet button")?.focus(), 30); }
+function closeSheet() { S.sheet = null; render(); }
+
+// ---------- Eventos ----------
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-tab],[data-sub],[data-act],[data-toggle],[data-fill],[data-cat],[data-pick],[data-answer],[data-dismiss],[data-block],[data-unblock],[data-temp],[data-ticket-next]");
+  if (!el) return;
+  const d = el.dataset;
+  if (d.toggle) { const i = $("#" + d.toggle); const show = i.type === "password"; i.type = show ? "text" : "password"; el.setAttribute("aria-pressed", show); el.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña"); return; }
+  if (d.fill) { $("#email").value = d.fill; $("#pw").focus(); return; }
+  if (d.tab) { S.tab = d.tab; S.sub = null; if (d.tab === "preguntas") S.q.selected = null; render(); window.scrollTo(0, 0); $("#main h1")?.focus?.(); return; }
+  if (d.sub !== undefined) { S.sub = d.sub || null; render(); window.scrollTo(0, 0); return; }
+  if (d.cat) { S.q.cat = d.cat; S.q.selected = null; S.q.sent = null; render(); return; }
+  if (d.pick) { pickQuestion(d.pick); return; }
+  if (d.answer) { openSheet({ type: "answer", id: d.answer }); return; }
+  if (d.dismiss) { S.data.pending = S.data.pending.filter(p => p.id !== d.dismiss); save(); render(); return; }
+  if (d.block) { openSheet({ type: "block", id: d.block }); return; }
+  if (d.unblock) { updUser(d.unblock, () => ({ active: true, failed: 0, lockedUntil: 0 })); S.flash = "Cuenta reactivada"; render(); return; }
+  if (d.temp) { const u = S.data.users.find(x => x.id === d.temp), pw = tempPassword(), h = await hashPw(pw); updUser(u.id, () => ({ passwordHash: h, mustChange: true, failed: 0, lockedUntil: 0 })); openSheet({ type: "temp", email: u.email, pw }); return; }
+  if (d.ticketNext) { const t = S.data.tickets.find(x => x.id === d.ticketNext); t.status = t.status === "Abierto" ? "En revisión" : "Cerrado"; save(); render(); return; }
+  switch (d.act) {
+    case "to-forgot": S.auth = "forgot"; S.reset = { step: 1 }; render(); break;
+    case "to-login": S.auth = "login"; S.reset = null; render(); break;
+    case "reset-again": S.reset = { step: 1, email: S.reset?.email }; render(); break;
+    case "cancel-forced": S.forced = null; render(); break;
+    case "logout": S.data.session = null; save(); S.tab = "inicio"; S.sub = null; S.auth = "login"; render(); break;
+    case "qclear": S.q.text = ""; S.q.selected = null; S.q.sent = null; $("#qinput").value = ""; $("#qinput").focus(); renderQResults(); break;
+    case "to-faq": S.q.cat = "FRECUENTE"; S.q.selected = null; render(); break;
+    case "send-pending": {
+      const txt = S.q.text.trim();
+      if (!S.data.pending.some(p => norm(p.text) === norm(txt))) S.data.pending.push({ id: uid(), text: txt, by: me().name, at: Date.now() });
+      S.q.sent = S.q.text; save(); render(); say("Consulta enviada al jefe de local"); break;
+    }
+    case "toggle-schedules": S.data.assistantSchedules = el.checked; save(); break;
+    case "clock-set": { const v = $("#clock").value; if (v) { S.data.clockOverride = v; save(); S.flash = "Hora simulada aplicada"; render(); } break; }
+    case "clock-reset": S.data.clockOverride = null; save(); render(); break;
+    case "reset-all": if (confirm("¿Reiniciar todos los datos de demostración? Se borrarán cambios, cuentas creadas y consultas.")) { localStorage.removeItem(STORE_KEY); location.reload(); } break;
+    case "new-user": openSheet({ type: "user" }); break;
+    case "new-ticket": openSheet({ type: "ticket" }); break;
+    case "confirm-block": updUser(S.sheet.id, () => ({ active: false })); S.sheet = null; S.flash = "Cuenta bloqueada"; render(); break;
+    case "close-sheet": closeSheet(); break;
+    case "sheet-bg": if (e.target === el && S.sheet?.type !== "answer") closeSheet(); break;
+  }
+});
+document.addEventListener("change", e => {
+  if (e.target.dataset.task) { const t = S.data.tasks.find(x => x.id === +e.target.dataset.task); t.done = e.target.checked; save(); e.target.closest(".task").classList.toggle("done", t.done); }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "qinput") { S.q.text = e.target.value; S.q.selected = null; S.q.sent = null; renderQResults(); return; }
+  if (["np", "np2", "code", "cur"].includes(e.target.id)) updateRules();
+  if (["email", "pw"].includes(e.target.id) && $("#err")) $("#err").textContent = "";
+});
+document.addEventListener("keydown", e => {
+  if (e.target.id === "qinput" && e.key === "Enter") { e.preventDefault(); const r = search(S.q.text, S.data.questions.filter(q => q.category === S.q.cat)); if (r[0]) pickQuestion(r[0].id); else e.target.blur(); }
+  if (e.key === "Escape" && S.sheet && S.sheet.type !== "answer") closeSheet();
+});
+document.addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target, btn = f.querySelector("button:not([type=button])"), err = $("#err");
+  if (f.id === "f-login") {
+    const email = $("#email").value, pw = $("#pw").value;
+    if (!email || !pw) { err.textContent = "Ingresa tu correo y contraseña."; return; }
+    busy(btn, true, "Verificando…");
+    const r = await login(email, pw);
+    busy(btn, false);
+    if (r.r === "ok") { S.tab = "inicio"; render(); }
+    else if (r.r === "change") { S.forced = { user: r.user, expired: r.expired }; render(); }
+    else { err.textContent = { invalid: "Correo o contraseña incorrectos.", blocked: "Tu cuenta está desactivada. Habla con tu jefe de local.", locked: `Demasiados intentos fallidos. Intenta de nuevo en ${r.min} min.` }[r.r]; $("#pw").value = ""; }
+  } else if (f.id === "f-forced") {
+    busy(btn, true);
+    const msg = await changePassword(S.forced.user.id, null, $("#np").value, true);
+    if (msg) { busy(btn, false); err.textContent = msg; } else { S.forced = null; S.flash = "Contraseña actualizada"; render(); }
+  } else if (f.id === "f-forgot1") {
+    const email = $("#email").value.trim();
+    if (!email) return;
+    busy(btn, true, "Enviando…");
+    S.reset = { step: 2, email, code: await requestReset(email) }; render();
+  } else if (f.id === "f-forgot2") {
+    busy(btn, true);
+    const msg = await resetWithCode(S.reset.email, $("#code").value, $("#np").value);
+    if (msg) { busy(btn, false); err.textContent = msg; } else { S.reset = { step: 3 }; render(); }
+  } else if (f.id === "f-change") {
+    busy(btn, true);
+    const msg = await changePassword(me().id, $("#cur").value, $("#np").value, false);
+    if (msg) { busy(btn, false); err.textContent = msg; } else { S.sub = null; S.flash = "Contraseña actualizada"; render(); }
+  } else if (f.id === "f-answer") {
+    const q = $("#a-q").value.trim(), a = $("#a-a").value.trim();
+    if (!q || !a) return;
+    const cat = f.querySelector("[name=a-cat]:checked").value, mo = f.querySelector("[name=a-mo]:checked").value || null;
+    S.data.questions.push({ id: uid(), category: cat, moment: cat === "TURNO" ? mo : null, question: q, answer: a, uses: 0 });
+    S.data.pending = S.data.pending.filter(p => p.id !== S.sheet.id);
+    save(); S.sheet = null; S.flash = "Respuesta publicada"; render();
+  } else if (f.id === "f-user") {
+    const name = $("#nu-name").value.trim(), email = $("#nu-email").value.trim().toLowerCase(), role = f.querySelector("[name=nu-role]:checked").value;
+    if (!name) { err.textContent = "Ingresa el nombre."; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = "Correo no válido."; return; }
+    if (S.data.users.some(u => u.email === email)) { err.textContent = "Ya existe una cuenta con ese correo."; return; }
+    busy(btn, true);
+    const pw = tempPassword();
+    S.data.users.push({ id: uid(), name, email, role, active: true, passwordHash: await hashPw(pw), passwordChangedAt: Date.now(), mustChange: true, history: [], failed: 0, lockedUntil: 0 });
+    save(); openSheet({ type: "temp", email, pw });
+  } else if (f.id === "f-ticket") {
+    const ctx = $("#tk-ctx").value.trim(); if (!ctx) return;
+    S.data.tickets.push({ id: uid(), type: f.querySelector("[name=tk-type]:checked").value, context: ctx, status: "Abierto", by: me().name, at: Date.now() });
+    save(); S.sheet = null; S.flash = "Ticket enviado"; render();
+  }
+});
+// Refresca el momento del turno cada minuto (sin interrumpir si se está escribiendo).
+setInterval(() => { if (me() && !S.sheet && document.activeElement?.tagName !== "INPUT" && ["inicio", "preguntas"].includes(S.tab) && !S.sub) render(); }, 60000);
+// Si otra pestaña cambia los datos (por ejemplo, bloquea al usuario), se aplica aquí.
+window.addEventListener("storage", e => { if (e.key === STORE_KEY) { S.data = load() || S.data; render(); } });
+
+// ---------- Inicio ----------
+(async () => {
+  if (!window.crypto?.subtle) {
+    root.innerHTML = `<div class="app"><main><h1>CheckHelph</h1><p>Este navegador no permite las funciones de seguridad necesarias. Abre el archivo con Chrome, Edge, Brave o Firefox actualizados.</p></main></div>`;
+    return;
+  }
+  S.data = load() || (await seed());
+  save();
+  render();
+})();
+</script>
+</body>
+</html>

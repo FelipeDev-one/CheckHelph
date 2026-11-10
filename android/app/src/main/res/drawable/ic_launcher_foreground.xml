@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptado de kit/brand/favicon.svg (sin el fondo, que lo aporta el ícono adaptativo). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="16.2"
+        android:translateY="15">
+        <path
+            android:fillColor="#F5F3ED"
+            android:pathData="M34,25h43l18,18v47a10,10 0,0 1,-10,10H34a10,10 0,0 1,-10,-10V35a10,10 0,0 1,10,-10Z" />
+        <path
+            android:pathData="M76,25v19h19"
+            android:strokeColor="#16333B"
+            android:strokeLineJoin="round"
+            android:strokeWidth="6" />
+        <path
+            android:fillColor="#0F6B63"
+            android:pathData="M38,54a5,5 0,1 0,10,0a5,5 0,1 0,-10,0Z" />
+        <path
+            android:fillColor="#16333B"
+            android:pathData="M58,50h18a4,4 0,0 1,0,8h-18a4,4 0,0 1,0,-8Z" />
+        <path
+            android:fillColor="#0F6B63"
+            android:pathData="M38,73a5,5 0,1 0,10,0a5,5 0,1 0,-10,0Z" />
+        <path
+            android:fillColor="#16333B"
+            android:pathData="M58,69h10a4,4 0,0 1,0,8h-10a4,4 0,0 1,0,-8Z" />
+        <path
+            android:fillColor="#0F6B63"
+            android:pathData="M56,83a23,23 0,1 0,46,0a23,23 0,1 0,-46,0Z"
+            android:strokeColor="#16333B"
+            android:strokeWidth="4" />
+        <path
+            android:pathData="M69,83l7,7l14,-16"
+            android:strokeColor="#F5F3ED"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:strokeWidth="6" />
+        <path
+            android:fillColor="#E2A43A"
+            android:pathData="M91,31a6,6 0,1 0,12,0a6,6 0,1 0,-12,0Z" />
+    </group>
+</vector>
